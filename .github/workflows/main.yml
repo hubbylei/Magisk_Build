@@ -89,10 +89,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: steps.tag.outputs.status == 'success' && !cancelled()
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.Magisk_Build_Check }}
         with:
           tag_name: ${{ steps.tag.outputs.release_tag }}
-          body: ${{ steps.tag.outputs.release_tag }} - ${{ steps.tag.outputs.release_body }}
+          body: ${{ steps.tag.outputs.release_tag }}-${{ steps.tag.outputs.release_body }}
           files: out/*
 
       - name: Delete workflow runs
