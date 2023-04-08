@@ -77,6 +77,24 @@ jobs:
       - name: Stop gradle daemon
         run: ./gradlew --stop
 
+      - name: Generate tag
+        id: tag
+        if: steps.compile.outputs.status == 'success'
+        run: |
+          echo "::set-output name=release_tag::$(git rev-parse HEAD | cut -c 1-8)"
+          echo "::set-output name=release_body::$(grep "magisk.versionCode" gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" gradle.properties | awk -F "=" '{print $2}')"
+          echo "::set-output name=status::success"
+
+      - name: Upload firmware to release
+        uses: softprops/action-gh-release@v1
+          if: steps.tag.outputs.status == 'success' && !cancelled()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          body: ${{ steps.tag.outputs.release_tag }} - ${{ steps.tag.outputs.release_body }}
+          files: out/*
+
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@main
         with:
