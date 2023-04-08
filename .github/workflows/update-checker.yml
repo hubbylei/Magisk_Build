@@ -1,0 +1,47 @@
+name: Update Checker
+
+env:
+  REPO_URL: https://github.com/topjohnwu/Magisk
+  REPO_BRANCH: master
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 10 * * *
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Get Commit Hash
+      id: getHash
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH .
+        echo "::set-output name=commitHash::$(git rev-parse HEAD)"
+
+    - name: Compare Commit Hash
+      id: cacheHash
+      uses: actions/cache@v3
+      with:
+        path: .commitHash
+        key: HEAD-${{ steps.getHash.outputs.commitHash }}
+
+    - name: Save New Commit Hash
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      run: |
+        echo ${{ steps.getHash.outputs.commitHash }} | tee .commitHash
+
+    - name: Build
+      if: steps.cacheHash.outputs.cache-hit != 'true'
+      uses: peter-evans/repository-dispatch@v2
+      with:
+        token: ${{ secrets.MAGISK_BUILD_CHECK }}
+        event-type: Source Code Update
+
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        retain_days: 0
+        keep_minimum_runs: 1
