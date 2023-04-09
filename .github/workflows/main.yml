@@ -85,6 +85,25 @@ jobs:
           echo "::set-output name=release_body::$(grep "magisk.versionCode" gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" gradle.properties | awk -F "=" '{print $2}')"
           echo "::set-output name=status::success"
 
+      - name: Make Notes
+        if: steps.tag.outputs.status == 'success'
+        run: |
+          ver=$(echo ${{ steps.tag.outputs.release_body }} | awk -F "-" '{print $1}')
+          echo "## Magisk (${{ steps.tag.outputs.release_tag }}) (${ver})" > ./out/notes.md
+
+      - name: Upload To File Host
+        uses: cpina/github-action-push-to-another-repository@main
+        if: steps.tag.outputs.status == 'success'
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
+        with:
+          source-directory: 'out'
+          destination-github-username: 'hubbylei'
+          destination-repository-name: 'Magisk-Files'
+          user-email: 'hubbylei@hubbylei.dynu.net'
+          commit-message: ${{ steps.tag.outputs.release_tag }}-${{ steps.tag.outputs.release_body }}
+          target-branch: master
+
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
         if: steps.tag.outputs.status == 'success' && !cancelled()
