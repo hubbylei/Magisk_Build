@@ -104,14 +104,6 @@ jobs:
           commit-message: ${{ steps.tag.outputs.release_tag }}-${{ steps.tag.outputs.release_body }}
           target-branch: master
 
-      - name: Upload firmware to release
-        uses: softprops/action-gh-release@v1
-        if: steps.tag.outputs.status == 'success' && !cancelled()
-        with:
-          tag_name: ${{ steps.tag.outputs.release_tag }}
-          body: ${{ steps.tag.outputs.release_tag }}-${{ steps.tag.outputs.release_body }}
-          files: out/*
-
       - name: Delete workflow runs
         uses: Mattraks/delete-workflow-runs@main
         with:
