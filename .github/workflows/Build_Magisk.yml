@@ -90,6 +90,23 @@ jobs:
         run: |
           ver=$(echo ${{ steps.tag.outputs.release_body }} | awk -F "-" '{print $1}')
           echo "## Magisk (${{ steps.tag.outputs.release_tag }}) (${ver})" > ./out/notes.md
+          json=$(curl -sL https://api.github.com/repos/topjohnwu/Magisk/commits | jq .)
+          jsha=$(echo $json | jq .[].sha | sed 's/\"//g')
+          hsha=$(curl -sL https://api.github.com/repos/hubbylei/Magisk-Files/commits | jq .[0].commit.message | sed 's/\"//g' | awk -F "-" '{print $1}')
+          sha=()
+          i=0
+          for s in $jsha
+          do
+            sha[$i]=$(echo $s | cut -c 1-8)
+            i=$(($i+1))
+          done
+          for ((i=0;i <${#sha[@]};i++))
+          do
+            if [ ${sha[$i]} == $hsha ];then
+                break
+            fi
+            echo "- "$(echo $json | jq .[$i].commit.message | sed 's/\\n\\n/<br>/g' | sed 's/\"//g') >> ./out/note.md
+          done
 
       - name: Upload To File Host
         uses: cpina/github-action-push-to-another-repository@main
