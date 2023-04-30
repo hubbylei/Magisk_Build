@@ -19,6 +19,7 @@ jobs:
     steps:
       - name: Clone source code
         run: |
+          sudo -E apt-get -qq install git
           git config --global http.postBuffer 524288000
           git clone --recurse-submodules $REPO_URL -b $REPO_BRANCH ./
 
