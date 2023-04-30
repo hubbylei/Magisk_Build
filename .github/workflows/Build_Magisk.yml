@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Clone source code
         run: |
-          df -hT $PWD
+          git config --global http.postBuffer 524288000
           git clone --recurse-submodules $REPO_URL -b $REPO_BRANCH ./
 
       - name: Set up JDK 17
