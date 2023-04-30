@@ -115,7 +115,7 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
         with:
           source-directory: 'out'
-          destination-github-username: ${{ secrets.DESTINATION_REPO_USERNAME }}
+          destination-github-username: 'hubbylei'
           destination-repository-name: 'Magisk-Files'
           user-email: ${{ secrets.UESR_EMAIL }}
           commit-message: ${{ steps.tag.outputs.release_tag }}-${{ steps.tag.outputs.release_body }}
