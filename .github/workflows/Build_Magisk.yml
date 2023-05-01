@@ -9,8 +9,11 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     env:
-      REPO_URL: https://github.com/topjohnwu/Magisk
+      REPO_URL: https://github.com/topjohnwu/Magisk.git
       REPO_BRANCH: master
+      GIT_TRACE_PACKET: 1
+      GIT_TRACE: 1
+      GIT_CURL_VERBOSE: 1
       NDK_CCACHE: ccache
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
@@ -21,7 +24,7 @@ jobs:
         run: |
           sudo -E apt-get -qq install git
           git config --global http.postBuffer 524288000
-          git clone --recurse-submodules $REPO_URL -b $REPO_BRANCH ./
+          git clone --depth 1 --recurse-submodules $REPO_URL -b $REPO_BRANCH ./
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -110,7 +113,7 @@ jobs:
           done
 
       - name: Upload To File Host
-        uses: cpina/github-action-push-to-another-repository@v1.6
+        uses: cpina/github-action-push-to-another-repository@main
         if: steps.tag.outputs.status == 'success'
         env:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
