@@ -111,7 +111,7 @@ jobs:
           done
 
       - name: Upload To File Host
-        uses: cpina/github-action-push-to-another-repository@main
+        uses: hubbylei/github-action-push-to-another-repository@main
         if: steps.tag.outputs.status == 'success'
         env:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
