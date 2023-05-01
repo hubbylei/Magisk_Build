@@ -11,9 +11,6 @@ jobs:
     env:
       REPO_URL: https://github.com/topjohnwu/Magisk.git
       REPO_BRANCH: master
-      GIT_TRACE_PACKET: 1
-      GIT_TRACE: 1
-      GIT_CURL_VERBOSE: 1
       NDK_CCACHE: ccache
       CCACHE_DIR: ${{ github.workspace }}/.ccache
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
