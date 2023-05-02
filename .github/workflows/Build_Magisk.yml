@@ -104,7 +104,7 @@ jobs:
             if [ ${sha[$i]} == $hsha ];then
                 break
             fi
-            echo "- "$(echo $json | jq .[$i].commit.message | sed 's/\\n\\n/<br>/g' | sed 's/\"//g') >> ./out/notes.md
+            echo "- "$(echo $json | jq .[$i].commit.message | sed 's/\\n/<br>/g' | sed 's/\"//g') >> ./out/notes.md
           done
 
       - name: Upload To File Host
