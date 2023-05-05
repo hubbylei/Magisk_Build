@@ -111,7 +111,7 @@ jobs:
         uses: actions/upload-artifact@main
         if: steps.tag.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ steps.tag.outputs.release_body }}
+          name: ${{ steps.tag.outputs.release_tag }}(${{ steps.tag.outputs.release_body }})
           path: out
 
       - name: Upload To File Host
