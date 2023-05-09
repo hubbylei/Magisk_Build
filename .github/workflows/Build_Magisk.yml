@@ -52,7 +52,7 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             !~/.gradle/caches/build-cache-*
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
+          key: ${{ runner.os }}-gradle-${{ github.sha }}
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Cache build cache
@@ -71,7 +71,7 @@ jobs:
         run: |
           python build.py -vr all
           python build.py -v all
-          echo "::set-output name=status::success"
+          echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Stop gradle daemon
         run: ./gradlew --stop
@@ -80,9 +80,9 @@ jobs:
         id: tag
         if: steps.compile.outputs.status == 'success'
         run: |
-          echo "::set-output name=release_tag::$(git rev-parse HEAD | cut -c 1-8)"
-          echo "::set-output name=release_body::$(grep "magisk.versionCode" gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" gradle.properties | awk -F "=" '{print $2}')"
-          echo "::set-output name=status::success"
+          echo "release_tag=$(git rev-parse HEAD | cut -c 1-8)" >> "$GITHUB_OUTPUT"
+          echo "release_body=$(grep "magisk.versionCode" gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" gradle.properties | awk -F "=" '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Make Notes
         if: steps.tag.outputs.status == 'success'
