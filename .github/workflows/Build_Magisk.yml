@@ -37,7 +37,6 @@ jobs:
         with:
           key: ${{ runner.os }}-${{ github.sha }}
           restore-keys: ${{ runner.os }}
-          append-timestamp: false
 
       - name: Set up sccache
         uses: hendrikmuhs/ccache-action@main
@@ -45,7 +44,6 @@ jobs:
           variant: sccache
           key: ${{ runner.os }}-${{ github.sha }}
           restore-keys: ${{ runner.os }}
-          append-timestamp: false
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
