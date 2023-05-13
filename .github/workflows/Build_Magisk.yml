@@ -52,7 +52,7 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             !~/.gradle/caches/build-cache-*
-          key: ${{ runner.os }}-gradle-${{ github.sha }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Cache build cache
@@ -60,7 +60,7 @@ jobs:
         with:
           path: |
             ~/.gradle/caches/build-cache-*
-          key: ${{ runner.os }}-build-cache-${{ github.sha }}
+          key: ${{ runner.os }}-build-cache-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-build-cache-
 
       - name: Set up NDK
