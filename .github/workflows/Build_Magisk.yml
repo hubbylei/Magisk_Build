@@ -89,9 +89,9 @@ jobs:
         run: |
           ver=$(echo ${{ steps.tag.outputs.release_body }} | awk -F "-" '{print $1}')
           echo "## Magisk (${{ steps.tag.outputs.release_tag }}) (${ver})" > ./out/notes.md
-          json=$(curl -sL -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/topjohnwu/Magisk/commits | jq .)
+          json=$(curl -sL -H 'Authorization: ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/topjohnwu/Magisk/commits | jq .)
           jsha=$(echo $json | jq .[].sha | sed 's/\"//g')
-          hsha=$(curl -sL -H 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/hubbylei/Magisk-Files/commits | jq .[0].commit.message | sed 's/\"//g' | awk -F "-" '{print $1}')
+          hsha=$(curl -sL -H 'Authorization: ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/hubbylei/Magisk-Files/commits | jq .[0].commit.message | sed 's/\"//g' | awk -F "-" '{print $1}')
           sha=()
           i=0
           for s in $jsha
