@@ -84,6 +84,7 @@ jobs:
           do
             ./SDK/zipalign -v 4 $apk $apk.signed
             rm -rf $apk
+            echo "Sign $apk"
             java -jar signapk.jar Magisk.x509.pem Magisk.pk8 $apk.signed $apk
             rm -rf $apk.signed
           done
