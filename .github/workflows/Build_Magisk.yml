@@ -17,9 +17,12 @@ jobs:
       RUSTC_WRAPPER: sccache
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@main
+    
       - name: Clone source code
         run: |
-          git clone --single-branch --depth 1 --recurse-submodules $REPO_URL -b $REPO_BRANCH ./
+          git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL ${GITHUB_WORKSPACE}/Magisk
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -64,11 +67,14 @@ jobs:
           restore-keys: ${{ runner.os }}-build-cache-
 
       - name: Set up NDK
-        run: python build.py -v ndk
+        run: |
+          cd ${GITHUB_WORKSPACE}/Magisk
+          python build.py -v ndk
 
       - name: Build App
         id: compile
         run: |
+          cd ${GITHUB_WORKSPACE}/Magisk
           python build.py -vr all
           python build.py -v all
           echo "status=success" >> "$GITHUB_OUTPUT"
@@ -76,10 +82,23 @@ jobs:
       - name: Stop gradle daemon
         run: ./gradlew --stop
 
+      -name: Sign APK
+        run: |
+          chmod +x ./zipalign
+          apks=$(find ${GITHUB_WORKSPACE}/Magisk/out -name '*.apk')
+          for apk in $apks
+          do
+            ./SDK/zipalign -v 4 $apk $apk.signed
+            rm -rf $apk
+            java -jar signapk.jar Magisk.x509.pem Magisk.pk8 $apk.signed $apk
+            rm -rf $apk.signed
+          done
+
       - name: Generate tag
         id: tag
         if: steps.compile.outputs.status == 'success'
         run: |
+          cd ${GITHUB_WORKSPACE}/Magisk
           echo "release_tag=$(git rev-parse HEAD | cut -c 1-8)" >> "$GITHUB_OUTPUT"
           echo "release_body=$(grep "magisk.versionCode" gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" gradle.properties | awk -F "=" '{print $2}')" >> "$GITHUB_OUTPUT"
           echo "status=success" >> "$GITHUB_OUTPUT"
@@ -87,6 +106,7 @@ jobs:
       - name: Make Notes
         if: steps.tag.outputs.status == 'success'
         run: |
+          cd ${GITHUB_WORKSPACE}/Magisk
           ver=$(echo ${{ steps.tag.outputs.release_body }} | awk -F "-" '{print $1}')
           echo "## Magisk (${{ steps.tag.outputs.release_tag }}) (${ver})" > ./out/notes.md
           json=$(curl -sL -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/topjohnwu/Magisk/commits | jq .)
@@ -120,7 +140,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
         with:
-          source-directory: 'out'
+          source-directory: '${GITHUB_WORKSPACE}/Magisk/out'
           destination-github-username: 'hubbylei'
           destination-repository-name: 'Magisk-Files'
           user-email: ${{ secrets.UESR_EMAIL }}
