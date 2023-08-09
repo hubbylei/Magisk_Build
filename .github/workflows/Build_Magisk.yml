@@ -82,7 +82,7 @@ jobs:
       - name: Stop gradle daemon
         run: ./gradlew --stop
 
-      -name: Sign APK
+      - name: Sign APK
         run: |
           chmod +x ./zipalign
           apks=$(find ${GITHUB_WORKSPACE}/Magisk/out -name '*.apk')
