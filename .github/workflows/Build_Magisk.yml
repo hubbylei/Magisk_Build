@@ -83,8 +83,9 @@ jobs:
         run: ./gradlew --stop
 
       - name: Sign APK
+        if: steps.compile.outputs.status == 'success'
         run: |
-          chmod +x ./zipalign
+          chmod +x ./SDK/zipalign
           apks=$(find ${GITHUB_WORKSPACE}/Magisk/out -name '*.apk')
           for apk in $apks
           do
