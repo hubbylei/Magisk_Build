@@ -80,11 +80,14 @@ jobs:
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Stop gradle daemon
-        run: ./gradlew --stop
+        run: |
+          cd ${GITHUB_WORKSPACE}
+          ./gradlew --stop
 
       - name: Sign APK
         if: steps.compile.outputs.status == 'success'
         run: |
+          cd ${GITHUB_WORKSPACE}
           chmod +x ./SDK/zipalign
           apks=$(find ${GITHUB_WORKSPACE}/Magisk/out -name '*.apk')
           for apk in $apks
