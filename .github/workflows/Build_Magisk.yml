@@ -11,10 +11,6 @@ jobs:
     env:
       REPO_URL: https://github.com/topjohnwu/Magisk.git
       REPO_BRANCH: master
-      NDK_CCACHE: ccache
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
-      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
-      RUSTC_WRAPPER: sccache
 
     steps:
       - name: Checkout
@@ -131,7 +127,7 @@ jobs:
         if: steps.tag.outputs.status == 'success' && !cancelled()
         with:
           name: ${{ steps.tag.outputs.release_tag }}(${{ steps.tag.outputs.release_body }})
-          path: out
+          path: ${GITHUB_WORKSPACE}/Magisk/out
 
       - name: Upload To File Host
         uses: hubbylei/github-action-push-to-another-repository@main
