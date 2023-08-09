@@ -35,18 +35,13 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Set up ccache
-        uses: hendrikmuhs/ccache-action@main
-        with:
-          key: ${{ runner.os }}-${{ github.sha }}
-          restore-keys: ${{ runner.os }}
-
       - name: Set up sccache
         uses: hendrikmuhs/ccache-action@main
         with:
           variant: sccache
           key: ${{ runner.os }}-${{ github.sha }}
           restore-keys: ${{ runner.os }}
+          max-size: 10000M
 
       - name: Cache Gradle dependencies
         uses: actions/cache@v3
@@ -63,7 +58,7 @@ jobs:
         with:
           path: |
             ~/.gradle/caches/build-cache-*
-          key: ${{ runner.os }}-build-cache-${{ hashFiles('**/*.gradle.kts') }}
+          key: ${{ runner.os }}-build-cache-${{ github.sha }}
           restore-keys: ${{ runner.os }}-build-cache-
 
       - name: Set up NDK
