@@ -127,7 +127,7 @@ jobs:
         if: steps.tag.outputs.status == 'success' && !cancelled()
         with:
           name: ${{ steps.tag.outputs.release_tag }}(${{ steps.tag.outputs.release_body }})
-          path: ${GITHUB_WORKSPACE}/Magisk/out
+          path: Magisk/out
 
       - name: Upload To File Host
         uses: hubbylei/github-action-push-to-another-repository@main
@@ -135,7 +135,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
         with:
-          source-directory: '${GITHUB_WORKSPACE}/Magisk/out'
+          source-directory: 'Magisk/out'
           destination-github-username: 'hubbylei'
           destination-repository-name: 'Magisk-Files'
           user-email: ${{ secrets.UESR_EMAIL }}
