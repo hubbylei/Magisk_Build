@@ -75,17 +75,19 @@ jobs:
           cd Magisk
           ./gradlew --stop
 
-      # - name: Sign APK
-        # if: steps.compile.outputs.status == 'success'
-        # run: |
-          # apks=$(find Magisk/out -name '*.apk')
-          # for apk in $apks
-          # do
-            # echo "Sign $apk"
-            # java -jar signapk.jar Magisk.x509.pem Magisk.pk8 $apk $apk.signed
-            # rm -rf $apk
-            # mv $apk.signed $apk
-          # done
+      - name: Sign APK
+        if: steps.compile.outputs.status == 'success'
+        run: |
+          apks=$(find Magisk/out -name '*.apk')
+          for apk in $apks
+          do
+            ./signer/zipalign -v 4 $apk $apk.signed
+            rm -rf $apk
+            mv $apk.signed $apk
+            echo "Sign $apk"
+            ./signer/apksigner sign --cert Magisk.x509.pem --key Magisk.pk8 $apk
+            rm -rf $apk.idsig
+          done
 
       - name: Generate tag
         id: tag
