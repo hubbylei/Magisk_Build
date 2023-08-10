@@ -78,6 +78,8 @@ jobs:
       - name: Sign APK
         if: steps.compile.outputs.status == 'success'
         run: |
+          chmod a+x ./signer/zipalign
+          chmod a+x ./signer/apksigner
           apks=$(find Magisk/out -name '*.apk')
           for apk in $apks
           do
