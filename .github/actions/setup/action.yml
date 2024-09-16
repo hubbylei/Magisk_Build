@@ -97,4 +97,4 @@ runs:
 
     - name: Set up NDK
       shell: bash
-      run: python build.py -v ndk
+      run: python Magisk/build.py -v ndk
