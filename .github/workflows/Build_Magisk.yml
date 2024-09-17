@@ -19,7 +19,7 @@ jobs:
     
       - name: Clone source code
         run: |
-          git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL .
+          git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL ./
           rm -rf .git
 
       - name: Setup environment
