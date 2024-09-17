@@ -19,7 +19,8 @@ jobs:
     
       - name: Clone source code
         run: |
-          git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL Magisk
+          git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL .
+          rm -rf .git
 
       - name: Setup environment
         uses: ./.github/actions/setup
@@ -29,7 +30,6 @@ jobs:
       - name: Build App
         id: compile
         run: |
-          cd Magisk
           python build.py -vr all
           python build.py -v all
           echo "status=success" >> "$GITHUB_OUTPUT"
