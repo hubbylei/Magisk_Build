@@ -20,7 +20,7 @@ jobs:
       - name: Clone source code
         run: |
           git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL $GITHUB_WORKSPACE/Magisk
-          cp -rvf $GITHUB_WORKSPACE/Magisk/* $GITHUB_WORKSPACE/
+          cp -rf $GITHUB_WORKSPACE/Magisk/* $GITHUB_WORKSPACE/
 
       - name: Setup environment
         uses: ./.github/actions/setup
