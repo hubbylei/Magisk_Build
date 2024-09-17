@@ -19,10 +19,8 @@ jobs:
     
       - name: Clone source code
         run: |
-          rm -rf .git
           git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL $GITHUB_WORKSPACE/Magisk
-          cp -rf $GITHUB_WORKSPACE/Magisk/* $GITHUB_WORKSPACE/
-          rm -rf $GITHUB_WORKSPACE/Magisk
+          cp -rvf $GITHUB_WORKSPACE/Magisk/* $GITHUB_WORKSPACE/
 
       - name: Setup environment
         uses: ./.github/actions/setup
@@ -59,6 +57,7 @@ jobs:
         id: tag
         if: steps.compile.outputs.status == 'success'
         run: |
+          cd Magisk
           echo "release_tag=$(git rev-parse HEAD | cut -c 1-8)" >> "$GITHUB_OUTPUT"
           echo "release_body=$(grep "magisk.versionCode" gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" gradle.properties | awk -F "=" '{print $2}')" >> "$GITHUB_OUTPUT"
           echo "status=success" >> "$GITHUB_OUTPUT"
