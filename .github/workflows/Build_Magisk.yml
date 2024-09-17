@@ -44,7 +44,7 @@ jobs:
         run: |
           chmod a+x ./signer/zipalign
           chmod a+x ./signer/apksigner
-          apks=$(find Magisk/out -name '*.apk')
+          apks=$(find out -name '*.apk')
           for apk in $apks
           do
             echo "Sign $apk"
