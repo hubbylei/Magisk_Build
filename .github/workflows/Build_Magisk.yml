@@ -19,8 +19,8 @@ jobs:
     
       - name: Clone source code
         run: |
+          rm -rf .git
           git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL $GITHUB_WORKSPACE/Magisk
-          rm -rf $GITHUB_WORKSPACE/Magisk/.git
           cp -rf $GITHUB_WORKSPACE/Magisk/* $GITHUB_WORKSPACE/
           rm -rf $GITHUB_WORKSPACE/Magisk
 
