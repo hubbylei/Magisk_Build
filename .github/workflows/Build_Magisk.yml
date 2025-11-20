@@ -34,9 +34,6 @@ jobs:
           python build.py -v all
           echo "status=success" >> "$GITHUB_OUTPUT"
 
-      - name: Stop gradle daemon
-        run: ./gradlew --stop
-
       - name: Sign APK
         if: steps.compile.outputs.status == 'success'
         run: |
