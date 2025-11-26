@@ -64,26 +64,7 @@ jobs:
 
       - name: Make Notes
         if: steps.tag.outputs.status == 'success'
-        run: |
-          ver=$(echo ${{ steps.tag.outputs.release_body }} | awk -F "-" '{print $1}')
-          echo "## Magisk (${{ steps.tag.outputs.release_tag }}) (${ver})" > ./out/notes.md
-          json=$(curl -sL -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/topjohnwu/Magisk/commits | jq .)
-          jsha=$(echo $json | jq .[].sha | sed 's/\"//g')
-          hsha=$(curl -sL -H 'Authorization: token ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/hubbylei/Magisk-Files/commits | jq .[0].commit.message | sed 's/\"//g' | awk -F "-" '{print $1}')
-          sha=()
-          i=0
-          for s in $jsha
-          do
-            sha[$i]=$(echo $s | cut -c 1-8)
-            i=$(($i+1))
-          done
-          for ((i=0;i <${#sha[@]};i++))
-          do
-            if [ ${sha[$i]} == $hsha ];then
-                break
-            fi
-            echo "- "$(echo $json | jq .[$i].commit.message | sed 's/\\n/<br>/g' | sed 's/\"//g') >> ./out/notes.md
-          done
+        run: bash $GITHUB_WORKSPACE/Notes.sh $GITHUB_WORKSPACE
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
