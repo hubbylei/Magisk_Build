@@ -59,7 +59,7 @@ jobs:
         run: |
           cd Magisk
           echo "release_tag=$(git rev-parse HEAD | cut -c 1-8)" >> "$GITHUB_OUTPUT"
-          echo "release_body=$(grep "magisk.versionCode" app/gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" gradle.properties | awk -F "=" '{print $2}')" >> "$GITHUB_OUTPUT"
+          echo "release_body=$(grep "magisk.versionCode" app/gradle.properties | awk -F "=" '{print $2}')-$(grep "magisk.stubVersion" app/gradle.properties | awk -F "=" '{print $2}')" >> "$GITHUB_OUTPUT"
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Make Notes
