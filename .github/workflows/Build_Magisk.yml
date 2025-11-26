@@ -3,7 +3,7 @@ name: Build Magisk
 on:
   workflow_dispatch:
   repository_dispatch:
-    types: [ Source Code Update ]
+    types: [ Build_Magisk ]
 
 jobs:
   Build:
