@@ -34,8 +34,8 @@ jobs:
       run: |
         if [ -f ./commitHash ];then
           cachehash=$(cat ./commitHash)
-          echo ${cachehash}
         fi
+        echo -e "hash:${cachehash}\n"
         if [ "${cachehash}" == "${{ steps.getHash.outputs.commitHash }}" ];then
           echo "build=false" >> "$GITHUB_OUTPUT"
         else
