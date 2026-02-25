@@ -22,5 +22,5 @@ do
   fi
   message=$(echo $json | jq .[$i].commit.message)
   echo ${message}
-  echo "- ${message}" | sed 's/\"//g' | sed 's/\\n\\n/<br>/g' >> ${workdir}/out/notes.md
+  echo "- ${message}" | sed 's/\"//g' | sed 's/\r//g' | sed 's/\\n\\n/<br>/g' >> ${workdir}/out/notes.md
 done
