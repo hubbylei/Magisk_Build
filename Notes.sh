@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 workdir=$1
-cd ${workdir}/Magisk
+cd ${workdir}
 release_tag=$(git rev-parse HEAD | cut -c 1-8)
 ver=$(grep "magisk.versionCode" app/gradle.properties | awk -F "=" '{print $2}')
 echo "## Magisk (${release_tag}) (${ver})" > ${workdir}/out/notes.md
