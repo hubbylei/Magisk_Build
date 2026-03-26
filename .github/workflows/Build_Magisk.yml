@@ -21,7 +21,6 @@ jobs:
       - name: Clone source code
         run: |
           git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL $GITHUB_WORKSPACE/Magisk
-          cp -rf $GITHUB_WORKSPACE/Magisk/* $GITHUB_WORKSPACE/
 
       - name: Setup environment
         uses: ./.github/actions/setup
@@ -31,19 +30,22 @@ jobs:
       - name: Build App
         id: compile
         run: |
+          cd $GITHUB_WORKSPACE/Magisk
           python build.py -vr all
           python build.py -v all
           echo "status=success" >> "$GITHUB_OUTPUT"
 
       - name: Stop gradle daemon
-        run: ./app/gradlew --stop
+        run: |
+          cd $GITHUB_WORKSPACE/Magisk
+          ./app/gradlew --stop
 
       - name: Sign APK
         if: steps.compile.outputs.status == 'success'
         run: |
           chmod a+x ./signer/zipalign
           chmod a+x ./signer/apksigner
-          apks=$(find out -name '*.apk')
+          apks=$(find $GITHUB_WORKSPACE/Magisk/out -name '*.apk')
           for apk in $apks
           do
             echo "Sign $apk"
@@ -72,7 +74,7 @@ jobs:
         if: steps.tag.outputs.status == 'success' && !cancelled()
         with:
           name: ${{ steps.tag.outputs.release_tag }}(${{ steps.tag.outputs.release_body }})
-          path: out
+          path: $GITHUB_WORKSPACE/Magisk/out
 
       - name: Upload To File Host
         uses: hubbylei/github-action-push-to-another-repository@main
@@ -80,7 +82,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
         with:
-          source-directory: 'out'
+          source-directory: '$GITHUB_WORKSPACE/Magisk/out'
           destination-github-username: 'hubbylei'
           destination-repository-name: 'Magisk-Files'
           user-email: ${{ secrets.UESR_EMAIL }}
