@@ -105,4 +105,4 @@ runs:
 
     - name: Set up NDK
       shell: bash
-      run: python build.py -v ndk
+      run: cd $GITHUB_WORKSPACE/Magisk && python build.py -v ndk
