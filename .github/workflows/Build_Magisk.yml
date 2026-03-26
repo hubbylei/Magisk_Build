@@ -10,7 +10,7 @@ env:
   SCCACHE_DIRECT: false
 jobs:
   Build:
-    runs-on: macos-26
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     steps:
