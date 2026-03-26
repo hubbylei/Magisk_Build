@@ -5,17 +5,18 @@ on:
   repository_dispatch:
     types: [ Build_Magisk ]
 
+env:
+  REPO_URL: https://github.com/topjohnwu/Magisk.git
+  REPO_BRANCH: master
+  SCCACHE_DIRECT: false
 jobs:
   Build:
-    runs-on: ubuntu-latest
-    env:
-      REPO_URL: https://github.com/topjohnwu/Magisk.git
-      REPO_BRANCH: master
-      SCCACHE_DIRECT: false
-
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@main
     
       - name: Clone source code
         run: |
