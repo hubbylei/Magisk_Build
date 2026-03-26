@@ -26,13 +26,17 @@ jobs:
         with:
           is-asset-build: true
 
-      - name: Build App
-        id: compile
+      - name: Build Release
+        id: release
         run: |
           cd $GITHUB_WORKSPACE/Magisk
-          echo "Build release"
           python build.py -vr all
-          echo "Build debug"
+          echo "status=success" >> "$GITHUB_OUTPUT"
+
+      - name: Build Debug
+        id: debug
+        run: |
+          cd $GITHUB_WORKSPACE/Magisk
           python build.py -v all
           echo "status=success" >> "$GITHUB_OUTPUT"
 
@@ -42,7 +46,7 @@ jobs:
           ./app/gradlew --stop
 
       - name: Sign APK
-        if: steps.compile.outputs.status == 'success'
+        if: steps.release.outputs.status == 'success' && steps.debug.outputs.status == 'success'
         run: |
           chmod a+x ./signer/zipalign
           chmod a+x ./signer/apksigner
@@ -59,7 +63,7 @@ jobs:
 
       - name: Generate tag
         id: tag
-        if: steps.compile.outputs.status == 'success'
+        if: steps.release.outputs.status == 'success' && steps.debug.outputs.status == 'success'
         run: |
           cd $GITHUB_WORKSPACE/Magisk
           echo "release_tag=$(git rev-parse HEAD | cut -c 1-8)" >> "$GITHUB_OUTPUT"
@@ -71,16 +75,16 @@ jobs:
         run: bash $GITHUB_WORKSPACE/Notes.sh $GITHUB_WORKSPACE/Magisk
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@main
         if: steps.tag.outputs.status == 'success' && !cancelled()
+        uses: actions/upload-artifact@main
         with:
           name: ${{ steps.tag.outputs.release_tag }}(${{ steps.tag.outputs.release_version }})
           path: $GITHUB_WORKSPACE/Magisk/out
           compression-level: 9
 
       - name: Upload To File Host
-        uses: hubbylei/github-action-push-to-another-repository@main
         if: steps.tag.outputs.status == 'success'
+        uses: hubbylei/github-action-push-to-another-repository@main
         env:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
         with:
