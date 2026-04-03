@@ -21,19 +21,18 @@ jobs:
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH .
         echo "commitHash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-    - name: Compare Commit Hash
+    - name: Restore Commit Hash
       id: cacheHash
-      uses: actions/cache@v4
+      uses: actions/cache/restore@main
       with:
         path: commitHash
         key: HEAD-${{ github.sha }}
-        restore-keys: HEAD-
 
-    - name: Save New Commit Hash
+    - name: Compare Commit Hash
       id: save
       run: |
-        if [ -f ${GITHUB_WORKSPACE}/commitHash ];then
-          cacheVer=$(cat ${GITHUB_WORKSPACE}/commitHash)
+        if [ -f commitHash ];then
+          cacheVer=$(cat commitHash)
         fi
         getVer=${{ steps.getHash.outputs.commitHash }}
         echo "CacheVer: ${cacheVer}"
@@ -41,10 +40,16 @@ jobs:
         if [ "${cacheVer}" == "${getVer}" ];then
           echo "build=false" >> "$GITHUB_OUTPUT"
         else
-          echo ${getVer} > ${GITHUB_WORKSPACE}/commitHash
-          touch ${GITHUB_WORKSPACE}/commitHash
+          echo ${getVer} > commitHash
+          touch commitHash
           echo "build=true" >> "$GITHUB_OUTPUT"
         fi
+
+    - name: Save Commit Hash
+      uses: actions/cache/save@main
+      with:
+        path: commitHash
+        key: HEAD-${{ github.sha }}
 
     - name: Build
       if: steps.save.outputs.build == 'true'
