@@ -49,7 +49,7 @@ jobs:
       uses: actions/cache/save@main
       with:
         path: commitHash
-        key: HEAD-${{ github.sha }}
+        key: ${{ steps.cacheHash.outputs.cache-primary-key }}
 
     - name: Build
       if: steps.save.outputs.build == 'true'
