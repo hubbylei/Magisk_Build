@@ -21,20 +21,10 @@ jobs:
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH .
         echo "commitHash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-    - name: Restore Commit Hash
-      id: cacheHash
-      uses: actions/cache/restore@main
-      with:
-        path: commitHash
-        key: HEAD-${{ github.sha }}
-        restore-keys: HEAD-
-
     - name: Compare Commit Hash
       id: compare
       run: |
-        if [ -d commitHash ];then
-          cacheVer=$(ls commitHash)
-        fi
+        cacheVer=$(curl -skL https://raw.githubusercontent.com/hubbylei/Magisk-Files/refs/heads/master/HEAD)
         getVer=${{ steps.getHash.outputs.commitHash }}
         echo "CacheVer: ${cacheVer}"
         echo "getVer: ${getVer}"
@@ -46,12 +36,6 @@ jobs:
           echo ${getVer} > commitHash/${getVer}
           echo "build=true" >> "$GITHUB_OUTPUT"
         fi
-
-    - name: Save Commit Hash
-      uses: actions/cache/save@main
-      with:
-        path: commitHash
-        key: ${{ steps.cacheHash.outputs.cache-primary-key }}
 
     - name: Build
       if: steps.compare.outputs.build == 'true'
