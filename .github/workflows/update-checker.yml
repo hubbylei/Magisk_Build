@@ -31,9 +31,6 @@ jobs:
         if [ "${cacheVer}" == "${getVer}" ];then
           echo "build=false" >> "$GITHUB_OUTPUT"
         else
-          rm -rf commitHash
-          mkdir -p commitHash
-          echo ${getVer} > commitHash/${getVer}
           echo "build=true" >> "$GITHUB_OUTPUT"
         fi
 
