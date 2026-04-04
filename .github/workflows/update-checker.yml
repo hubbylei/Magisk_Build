@@ -27,6 +27,7 @@ jobs:
       with:
         path: commitHash
         key: HEAD-${{ github.sha }}
+        restore-keys: HEAD-
 
     - name: Compare Commit Hash
       id: save
