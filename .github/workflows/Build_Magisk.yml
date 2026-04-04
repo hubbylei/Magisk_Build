@@ -18,8 +18,11 @@ jobs:
         uses: actions/checkout@main
     
       - name: Clone source code
+        id: clone
         run: |
           git clone --single-branch --depth 1 --recurse-submodules -b $REPO_BRANCH $REPO_URL Magisk
+          cd Magisk
+          echo "Hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Setup environment
         uses: ./.github/actions/setup
@@ -81,6 +84,9 @@ jobs:
           name: ${{ steps.tag.outputs.release_tag }}(${{ steps.tag.outputs.release_version }})
           path: Magisk/out
           compression-level: 9
+
+      - name: Generate HEAD
+        run: echo ${{ steps.clone.outputs.Hash }} > Magisk/out/HEAD
 
       - name: Upload To File Host
         if: steps.tag.outputs.status == 'success'
