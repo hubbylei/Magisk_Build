@@ -23,15 +23,14 @@ jobs:
 
     - name: Restore Commit Hash
       id: cacheHash
-      uses: actions/cache@main
+      uses: actions/cache/restore@main
       with:
         path: commitHash
         key: HEAD-${{ github.sha }}
         restore-keys: HEAD-
-        save-always: true
 
     - name: Compare Commit Hash
-      id: save
+      id: compare
       run: |
         if [ -d commitHash ];then
           cacheVer=$(ls commitHash)
@@ -48,8 +47,14 @@ jobs:
           echo "build=true" >> "$GITHUB_OUTPUT"
         fi
 
+    - name: Save Commit Hash
+      uses: actions/cache/save@main
+      with:
+        path: commitHash
+        key: ${{ steps.cacheHash.outputs.cache-primary-key }}
+
     - name: Build
-      if: steps.save.outputs.build == 'true'
+      if: steps.compare.outputs.build == 'true'
       uses: peter-evans/repository-dispatch@v3
       with:
         token: ${{ secrets.MAGISK_BUILD_CHECK }}
