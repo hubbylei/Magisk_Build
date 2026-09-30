@@ -49,9 +49,6 @@ jobs:
           for apk in $apks
           do
             echo "Sign $apk"
-            ./signer/zipalign -v 4 $apk $apk.signed > /dev/null
-            rm -rf $apk
-            mv $apk.signed $apk
             ./signer/apksigner sign --cert Magisk.x509.pem --key Magisk.pk8 $apk
             rm -rf $apk.idsig
           done
