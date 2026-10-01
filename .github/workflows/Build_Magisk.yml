@@ -69,7 +69,7 @@ jobs:
         if: steps.tag.outputs.status == 'success'
         run: |
             chmod a+x ./Notes.sh
-            ./Notes.sh Magisk
+            ./Notes.sh ${GITHUB_WORKSPACE}/Magisk
 
       - name: List
         run: ls -hl Magisk/out
