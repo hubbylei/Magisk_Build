@@ -45,16 +45,16 @@ jobs:
         run: |
           chmod a+x ./signer/zipalign
           chmod a+x ./signer/apksigner
-          apks=$(find $GITHUB_WORKSPACE/Magisk/out -name '*.apk')
+          apks=$(find Magisk/out -name '*.apk')
           for apk in $apks
           do
             echo "Sign $apk"
             ./signer/zipalign -v 4 $apk $apk.signed > /dev/null
-            rm -rf $apk
-            mv $apk.signed $apk
+            rm -rvf $apk
+            mv -vf $apk.signed $apk
             ./signer/apksigner sign --cert Magisk.x509.pem --key Magisk.pk8 $apk
-            rm -rf $apk.idsig
           done
+          rm -rvf $apk.idsig
 
       - name: Generate tag
         id: tag
@@ -67,14 +67,19 @@ jobs:
 
       - name: Make Notes
         if: steps.tag.outputs.status == 'success'
-        run: bash $GITHUB_WORKSPACE/Notes.sh $GITHUB_WORKSPACE/Magisk
+        run: |
+            chmod a+x ./Notes.sh
+            ./Notes.sh Magisk
+
+      - name: List
+        run: ls -hl Magisk/out
 
       - name: Upload Artifact
         uses: actions/upload-artifact@main
         if: steps.tag.outputs.status == 'success' && !cancelled()
         with:
           name: ${{ steps.tag.outputs.release_tag }}(${{ steps.tag.outputs.release_body }})
-          path: $GITHUB_WORKSPACE/Magisk/out
+          path: Magisk/out
 
       - name: Upload To File Host
         uses: hubbylei/github-action-push-to-another-repository@main
