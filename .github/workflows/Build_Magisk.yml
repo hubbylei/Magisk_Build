@@ -54,7 +54,7 @@ jobs:
             mv -vf $apk.signed $apk
             ./signer/apksigner sign --cert Magisk.x509.pem --key Magisk.pk8 $apk
           done
-          rm -rvf $apk.idsig
+          rm -rvf Magisk/out/*.idsig
 
       - name: Generate tag
         id: tag
@@ -87,7 +87,7 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.MAGISK_BUILD_CHECK }}
         with:
-          source-directory: '$GITHUB_WORKSPACE/Magisk/out'
+          source-directory: 'Magisk/out'
           destination-github-username: 'hubbylei'
           destination-repository-name: 'Magisk-Files'
           user-email: ${{ secrets.UESR_EMAIL }}
