@@ -94,4 +94,4 @@ else
     jarpath="$libdir/$jarfile"
 fi
 
-exec java $javaOpts -jar "$jarpath" "$@"
+exec java --enable-native-access=ALL-UNNAMED $javaOpts -jar "$jarpath" "$@"
