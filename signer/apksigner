@@ -66,7 +66,7 @@ defaultMx="-Xmx1024M"
 # example. "java" (with no args) and "java -X" give a summary of
 # available options.
 
-javaOpts=""
+javaOpts="--enable-native-access=ALL-UNNAMED"
 
 while expr "x$1" : 'x-J' >/dev/null; do
     opt=`expr "x$1" : 'x-J\(.*\)'`
@@ -94,4 +94,4 @@ else
     jarpath="$libdir/$jarfile"
 fi
 
-exec java --enable-native-access=ALL-UNNAMED $javaOpts -jar "$jarpath" "$@"
+exec java $javaOpts -jar "$jarpath" "$@"
