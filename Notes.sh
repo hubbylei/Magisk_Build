@@ -24,3 +24,4 @@ do
   echo ${message}
   echo "- ${message}" | sed 's/\\r//g' | sed 's/\\n/<br>/g' | sed 's/<br><br>/<br>/g' | sed 's/\\"/\"/g' | sed 's/\"\(.*\)\"/\1/' >> ${workdir}/out/notes.md
 done
+cp -vf ${workdir}/out/notes.md ${workdir}/out/README.md
