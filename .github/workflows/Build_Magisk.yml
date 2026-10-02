@@ -11,7 +11,7 @@ env:
   SCCACHE_DIRECT: false
 jobs:
   Build:
-    runs-on: ubuntu-latest
+    runs-on: Ubuntu 24.04
     strategy:
       fail-fast: false
     steps:
