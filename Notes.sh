@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 workdir=$1
+mkdir -p ${workdir}/out
 cd ${workdir}
 release_tag=$(git rev-parse HEAD | cut -c 1-8)
 ver=$(grep "magisk.versionCode" app/gradle.properties | awk -F "=" '{print $2}')
-echo "## Magisk (${release_tag}) (${ver})" > ${workdir}/out/notes.md
+echo "# Magisk (${release_tag}) (${ver})" > ${workdir}/out/notes.md
 json=$(curl -sL https://api.github.com/repos/topjohnwu/Magisk/commits)
 jsha=$(echo $json | jq -r .[].sha)
 hsha=$(curl -sL https://api.github.com/repos/hubbylei/Magisk-Files/commits | jq -r .[0].commit.message | awk -F "-" '{print $1}')
@@ -22,6 +23,7 @@ do
   fi
   message=$(echo $json | jq .[$i].commit.message)
   echo ${message}
-  echo "- ${message}" | sed 's/\\r//g' | sed 's/\\n/<br>/g' | sed 's/<br><br>/<br>/g' | sed 's/\\"/\"/g' | sed 's/\"\(.*\)\"/\1/' >> ${workdir}/out/notes.md
+  echo "> ${message}" | sed 's/\\r//g' | sed 's/\\n/<br>/g' | sed 's/<br><br>/<br>/g' | sed 's/\\"/\"/g' | sed 's/\"\(.*\)\"/\1/' >> ${workdir}/out/notes.md
 done
+sed -i 'G' ${workdir}/out/notes.md
 cp -vf ${workdir}/out/notes.md ${workdir}/out/README.md
