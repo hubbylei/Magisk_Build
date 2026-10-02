@@ -5,7 +5,8 @@ mkdir -p ${workdir}/out
 cd ${workdir}
 release_tag=$(git rev-parse HEAD | cut -c 1-8)
 ver=$(grep "magisk.versionCode" app/gradle.properties | awk -F "=" '{print $2}')
-echo "# Magisk (${release_tag}) (${ver})" > ${workdir}/out/notes.md
+stubVer=$(grep "magisk.stubVersion" app/gradle.properties | awk -F "=" '{print $2}')
+echo "# Magisk (${release_tag}) (${ver}-${stubVer})" > ${workdir}/out/notes.md
 json=$(curl -sL https://api.github.com/repos/topjohnwu/Magisk/commits)
 jsha=$(echo $json | jq -r .[].sha)
 hsha=$(curl -sL https://api.github.com/repos/hubbylei/Magisk-Files/commits | jq -r .[0].commit.message | awk -F "-" '{print $1}')
